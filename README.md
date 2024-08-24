@@ -1,6 +1,6 @@
 # yatcm
 
-Yet another tilde caddy manager. Runs with [bun](https://bun.sh).
+Yet another tilde caddy manager. Runs with [bun](https://bun.sh). This allows your tilde instance users to configure Caddy at the top level themselves instead of having to beg an admin to do it. Supports domain verification for custom domains and the [Burble CA](https://dn42.burble.com/services/ca/) for dn42 domains out of the box.
 
 ## Configuration
 
