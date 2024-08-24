@@ -55,3 +55,20 @@ Please protect your socket by only allowing admins/root to access it.
    npx prisma db push
    ```
 7. You're done!
+
+## Commands
+```
+Usage: yatcm [options] [command]
+
+Yet another tilde caddy manager
+
+Options:
+  -V, --version           output the version number
+  -h, --help              display help for command
+
+Commands:
+  list                    lists all domains you have configured in caddy
+  add [options] <domain>  adds a domain to caddy (Use --proxy to proxy to another socket or URL)
+  rm <domain>             removes a domain from caddy
+  help [command]          display help for command
+```
