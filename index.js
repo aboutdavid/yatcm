@@ -7,8 +7,9 @@ const { Command } = require('commander');
 const program = new Command();
 const utils = require("./utils")
 const validator = require('validator');
+const os = require("os")
 var username = os.userInfo().username
-
+const isAdmin = !process.getuid() || os.userInfo().username == "nest-internal"
 program
     .name('yatcm')
     .description('Yet another tilde caddy manager')
@@ -18,7 +19,7 @@ program
     .description('lists all domains you have configured in caddy')
     .option('--user', 'allows you to add a domain on behalf of a user (requires sudo)')
     .action(async (options) => {
-        if (options?.user && !process.getuid()) username = options.user
+        if (options?.user && isAdmin) username = options.user
         var domains = await utils.getDomains(username)
         domains = domains.map(domain => `- ${domain.domain} (${domain.proxy})`).join("\n")
         console.log(domains)
@@ -29,7 +30,7 @@ program
     .option('--proxy', 'changes where the domain should be proxied to (advanced)')
     .option('--user', 'allows you to add a domain on behalf of a user (requires sudo)')
     .action(async (domain, options) => {
-        if (options?.user && !process.getuid()) username = options.user
+        if (options?.user && isAdmin) username = options.user
         if (!validator.isFQDN(domain)) {
             console.error("This domain is not a valid domain name. Please choose a valid domain name.")
             process.exit(1)
@@ -66,7 +67,7 @@ program
     .description('removes a domain from caddy')
     .option('--user', 'allows you to add a domain on behalf of a user (requires sudo)')
     .action(async (domain, options) => {
-        if (options?.user && !process.getuid()) username = options.user
+        if (options?.user && isAdmin) username = options.user
         if (!validator.isFQDN(domain)) {
             console.error("This domain is not a valid domain name. Please choose a valid domain name.")
             process.exit(1)

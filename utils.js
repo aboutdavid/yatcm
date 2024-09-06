@@ -3,6 +3,7 @@ const { minimatch } = require('minimatch')
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const dns = require('node:dns').promises;
+const isAdmin = !process.getuid() || os.userInfo().username == "nest-internal"
 
 module.exports = {
     checkWhitelist: function (domain, username) {
@@ -35,7 +36,7 @@ module.exports = {
         else return true
     },
     async domainOwnership(domain, username) {
-        if (!process.getuid()) return true // If sudo, skip.
+        if (isAdmin) return true // If sudo, skip.
         const d = await prisma.domain.findFirst({
             where: {
                 domain,
@@ -46,7 +47,7 @@ module.exports = {
         else return true
     },
     async checkVerification(domain) {
-        if (!process.getuid()) return true // If sudo, skip.
+        if (isAdmin) return true // If sudo, skip.
         try {
             const records = await dns.resolveTxt(domain);
 
