@@ -2,12 +2,10 @@ const fs = require("node:fs")
 const { minimatch } = require('minimatch')
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const os = require("node:os")
 const dns = require('node:dns').promises;
-const username = os.userInfo().username
 
 module.exports = {
-    checkWhitelist: function (domain) {
+    checkWhitelist: function (domain, username) {
         if (!fs.existsSync(".whitelist")) return
         const whitelist = fs.readFileSync(".whitelist", "utf8").split("\n")
 
@@ -19,7 +17,7 @@ module.exports = {
         }
         return false
     },
-    async getDomains() {
+    async getDomains(username) {
         const domains = await prisma.domain.findMany({
             where: {
                 username
@@ -36,7 +34,8 @@ module.exports = {
         if (!d) return false
         else return true
     },
-    async domainOwnership(domain) {
+    async domainOwnership(domain, username) {
+        if (!process.getuid()) return true // If sudo, skip.
         const d = await prisma.domain.findFirst({
             where: {
                 domain,
@@ -47,7 +46,7 @@ module.exports = {
         else return true
     },
     async checkVerification(domain) {
-
+        if (!process.getuid()) return true // If sudo, skip.
         try {
             const records = await dns.resolveTxt(domain);
 
